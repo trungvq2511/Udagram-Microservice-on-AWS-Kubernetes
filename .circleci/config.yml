@@ -1,0 +1,55 @@
+# .circleci/config.yml file
+version: 2.1
+
+jobs:
+  build:            # job name
+    docker:         # executor type
+      - image: cimg/base:current # Docker image that installs Docker and has Git,
+    working_directory: ~/app
+    # Check
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run:
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Check environment variables
+          command: |
+            echo $DOCKER_USERNAME
+            echo $DOCKER_PASSWORD    
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker --version # print the version for logging
+            
+            echo "Building Docker images..."
+            
+            docker build -t udagram-reverseproxy ./udagram-reverseproxy        
+            docker tag udagram-reverseproxy cowboysaker2511/udagram-reverseproxy:v1
+            
+            docker build -t udagram-api-feed ./udagram-api-feed        
+            docker tag udagram-api-feed cowboysaker2511/udagram-api-feed:v1
+            
+            docker build -t udagram-api-user ./udagram-api-user        
+            docker tag udagram-api-user cowboysaker2511/udagram-api-user:v1
+            
+            docker build -t udagram-frontend ./udagram-frontend        
+            docker tag udagram-frontend cowboysaker2511/udagram-frontend:v1
+                        
+            echo "Loging in DockerHub..."
+            
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            
+            echo "Pushing images to DockerHub..."
+            
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push cowboysaker2511/udagram-reverseproxy:v1        
+            docker push cowboysaker2511/udagram-api-user:v1
+            docker push cowboysaker2511/udagram-api-feed:v1
+            docker push cowboysaker2511/udagram-frontend:v1
+workflows:
+  my-workflow:
+    jobs:
+      - build
