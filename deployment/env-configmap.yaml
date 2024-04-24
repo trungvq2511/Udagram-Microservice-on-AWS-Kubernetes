@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: abcd1234
+  POSTGRES_DB: postgres
+  POSTGRES_HOST: udagram-trungvq8.cp1sheza8dvp.us-east-1.rds.amazonaws.com
+  AWS_BUCKET: udagram-trungvq8-dev
+  AWS_REGION: us-east-1
+  AWS_PROFILE: default
+  JWT_SECRET: hello
+  URL: http://localhost:8100
