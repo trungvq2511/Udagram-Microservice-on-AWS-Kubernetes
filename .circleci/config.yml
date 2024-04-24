@@ -60,8 +60,7 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME"
             --password-stdin
 
-            docker push
-            cowboysaker2511/cowboysaker2511/udagram-reverseproxy        
+            docker push cowboysaker2511/cowboysaker2511/udagram-reverseproxy:v1        
 
             docker push cowboysaker2511/cowboysaker2511/udagram-api-user:v1
 
