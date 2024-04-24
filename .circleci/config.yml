@@ -1,31 +1,56 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
+# .circleci/config.yml file
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
-    docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/base:current
-
-    # Add steps to the job
-    # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
+  build:            # job name
+    docker:         # executor type
+      - image: cimg/base:current # Docker image that installs Docker and has Git,
+    working_directory: ~/app
+    # Check
     steps:
-      # Checkout the code as the first step.
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Check environment variables
+          command: |
+            echo $DOCKER_USERNAME
+            echo $DOCKER_PASSWORD    
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker --version # print the version for logging
+            
+            echo "Building Docker images..."
+            
+            docker build -t udagram-reverseproxy ./udagram-reverseproxy        
+            docker tag udagram-reverseproxy cowboysaker2511/udagram-reverseproxy:v1
+            
+            docker build -t udagram-api-feed ./udagram-api-feed        
+            docker tag udagram-api-feed cowboysaker2511/udagram-api-feed:v1
+            
+            docker build -t udagram-api-user ./udagram-api-user        
+            docker tag udagram-api-user cowboysaker2511/udagram-api-user:v1
+            
+            docker build -t udagram-frontend ./udagram-frontend        
+            docker tag udagram-frontend cowboysaker2511/udagram-frontend:v1
+                        
+            echo "Loging in DockerHub..."
+            
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push cowboysaker2511/sample-express-app:1.0.0
+            
+            echo "Pushing images to DockerHub..."
+            
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push cowboysaker2511/cowboysaker2511/udagram-reverseproxy        
+            docker push cowboysaker2511/cowboysaker2511/udagram-api-user:v1
+            docker push cowboysaker2511/cowboysaker2511/udagram-api-feed:v1
+            docker push cowboysaker2511/cowboysaker2511/udagram-frontend:v1
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  my-workflow:
     jobs:
-      - say-hello
+      - build
