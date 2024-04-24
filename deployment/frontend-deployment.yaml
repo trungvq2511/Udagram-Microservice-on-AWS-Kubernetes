@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: cowboysaker2511/udagram-frontend:v1
+        image: cowboysaker2511/udagram-frontend:v7
         imagePullPolicy: Always          
         resources:
           requests:
