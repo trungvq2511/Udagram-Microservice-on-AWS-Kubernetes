@@ -45,10 +45,10 @@ jobs:
             echo "Pushing images to DockerHub..."
             
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push cowboysaker2511/cowboysaker2511/udagram-reverseproxy:v1        
-            docker push cowboysaker2511/cowboysaker2511/udagram-api-user:v1
-            docker push cowboysaker2511/cowboysaker2511/udagram-api-feed:v1
-            docker push cowboysaker2511/cowboysaker2511/udagram-frontend:v1
+            docker push cowboysaker2511/udagram-reverseproxy:v1        
+            docker push cowboysaker2511/udagram-api-user:v1
+            docker push cowboysaker2511/udagram-api-feed:v1
+            docker push cowboysaker2511/udagram-frontend:v1
 workflows:
   my-workflow:
     jobs:
